@@ -1,18 +1,18 @@
-def numerical_subgradient(w, b, X, y, delta=1e-4):
+def numerical_subgradient(w, b, X, y, huber_delta: float, delta=1e-4):
     w_ = w.copy()
     g_w = np.zeros_like(w_)
-    orig_objective = LinearRegressor.loss(w_, b, X, y)
+    orig_objective = LinearRegressor.loss(w_, b, X, y, huber_delta)
     for i in range(g_w.shape[0]):
         w_[i] += delta
-        perturbed_objective = LinearRegressor.loss(w_, b, X, y)
+        perturbed_objective = LinearRegressor.loss(w_, b, X, y, huber_delta)
         w_[i] -= delta
         g_w[i] = (perturbed_objective - orig_objective) / delta
 
-    g_b = (LinearRegressor.loss(w_, b + delta, X, y) - orig_objective) / delta
+    g_b = (LinearRegressor.loss(w_, b + delta, X, y, huber_delta) - orig_objective) / delta
     return g_w, g_b
 
 
-def compare_gradients(X, y, deltas, C=1, REPEATS=10, figsize=(10, 6)):
+def compare_gradients(X, y, huber_delta: float, deltas, C=1, REPEATS=10, figsize=(10, 6)):
     residual_means_w = []
     residual_means_b = []
 
@@ -26,9 +26,9 @@ def compare_gradients(X, y, deltas, C=1, REPEATS=10, figsize=(10, 6)):
             b = np.random.randn(1)
 
             # Compute the two types of gradients
-            analytic_grad_w, analytic_grad_b = LinearRegressor.gradient(w, b, X, y)
+            analytic_grad_w, analytic_grad_b = LinearRegressor.gradient(w, b, X, y, huber_delta)
 
-            numeric_grad_w, numeric_grad_b = numerical_subgradient(w, b, X, y, delta=delta)
+            numeric_grad_w, numeric_grad_b = numerical_subgradient(w, b, X, y, huber_delta, delta=delta)
 
             residual_w = np.linalg.norm(numeric_grad_w - analytic_grad_w)
             residuals_w.append(residual_w)

@@ -1,7 +1,8 @@
 import matplotlib.pyplot as plt
 import numpy as np
 
-def test_lr(X_train, y_train, X_val, y_val, title:str, max_iter = 1500):
+
+def test_lr(X_train, y_train, X_val, y_val, huber_delta: float, title: str, max_iter: int = 1500):
   lr_list = np.logspace(-9, -1, 9)
 
   fig, axs = plt.subplots(3, 3, sharey=True, figsize=(20, 12))
@@ -11,9 +12,9 @@ def test_lr(X_train, y_train, X_val, y_val, title:str, max_iter = 1500):
   
   axs = np.ravel(axs)
   for i, lr in enumerate(lr_list):
-    cur_linear_reggressor = LinearRegressor(lr)
-    train_losses, val_losses = cur_linear_reggressor.fit_with_logs(X_train, y_train, keep_losses=True, X_val=X_val, y_val=y_val, max_iter = max_iter)
-    print('lr size = '+str(lr)+', Best train loss = '+str(min(train_losses))+', Best validation loss = '+str(min(val_losses)))
+    cur_linear_reggressor = LinearRegressor(lr, huber_delta)
+    train_losses, val_losses = cur_linear_reggressor.fit_with_logs(X_train, y_train, keep_losses=True, X_val=X_val, y_val=y_val, max_iter=max_iter)
+    print('lr size = '+str(lr)+', Best train loss = '+str(min(train_losses))+', Best validation loss = ' + str(min(val_losses)))
 
     iterations = np.arange(max_iter + 1)
     axs[i].semilogy(iterations, train_losses, label="Train")

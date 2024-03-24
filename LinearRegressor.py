@@ -1,11 +1,12 @@
 from sklearn.base import BaseEstimator, RegressorMixin
 import numpy as np
 
-    class LinearRegressor(BaseEstimator, RegressorMixin):
+
+class LinearRegressor(BaseEstimator, RegressorMixin):
     """
     Custom linear regression model
     """
-    def __init__(self, lr: float = 1e-5):
+    def __init__(self, lr: float = 1e-5, huber_delta: float = 1.0):
         """
         Initialize an instance of this class.
         ** Do not edit this method **
@@ -16,6 +17,7 @@ import numpy as np
         self.batch_size = 32
         self.w = None
         self.b = 0.0
+        self.delta = huber_delta
 
     # Initialize a random weight vector
     def init_solution(self, n_features: int):
@@ -29,7 +31,7 @@ import numpy as np
         self.b = 0.0
 
     @staticmethod
-    def loss(w, b: float, X, y):
+    def loss(w, b: float, X, y, huber_delta: float):
         """
         Compute the MSE objective loss.
 
@@ -46,7 +48,7 @@ import numpy as np
         return loss
 
     @staticmethod
-    def gradient(w, b: float, X, y):
+    def gradient(w, b: float, X, y, huber_delta: float):
         """
         Compute the (analytical) linear regression objective gradient.
 
@@ -82,8 +84,8 @@ import numpy as np
         val_losses = []
 
         if keep_losses:
-            train_losses.append(self.loss(self.w, self.b, X, y))
-            val_losses.append(self.loss(self.w, self.b, X_val, y_val))
+            train_losses.append(self.loss(self.w, self.b, X, y, self.delta))
+            val_losses.append(self.loss(self.w, self.b, X_val, y_val, self.delta))
 
         # Iterate over batches (SGD)
         for itr in range(0, max_iter):
@@ -101,8 +103,8 @@ import numpy as np
             self.b = 0.0
 
             if keep_losses:
-                train_losses.append(self.loss(self.w, self.b,  X, y))
-                val_losses.append(self.loss(self.w, self.b,  X_val, y_val))
+                train_losses.append(self.loss(self.w, self.b,  X, y, self.delta))
+                val_losses.append(self.loss(self.w, self.b,  X_val, y_val, self.delta))
 
         return train_losses, val_losses
 
