@@ -41,7 +41,7 @@ def prepare_data(training_data, new_data, transform_to_angle=False):
     normalized_data = new_data.copy()
     normalized_data = transform_features(normalized_data, transform_to_angle)
     training_data = transform_features(training_data, transform_to_angle)
-    print(list(normalized_data.columns))
+    # print(list(normalized_data.columns))
     labels = list(normalized_data.columns)
     # labels.remove("spread")
     # labels.remove("risk")
@@ -49,7 +49,7 @@ def prepare_data(training_data, new_data, transform_to_angle=False):
     for label in labels:
         stat, p = shapiro(normalized_data[[label]])
         if p < 0.05:
-            print(f"<> label {label} is not normally distribured, p-value = {p}, stat = {stat}")
+            # print(f"<> label {label} is not normally distribured, p-value = {p}, stat = {stat}")
             num_unique = normalized_data[label].nunique()
             if num_unique > 2 and num_unique < 30:
                 normalized_data[[label]] = StandardScaler().fit(training_data[[label]]).transform(normalized_data[[label]])
@@ -58,7 +58,7 @@ def prepare_data(training_data, new_data, transform_to_angle=False):
                 normalized_data[[label]] = MinMaxScaler((-1, 1)).fit(training_data[[label]]).transform(normalized_data[[label]])
                 scaler_decision[label] = "minmax"
         else:
-            print(f"<++> label {label} is normally distribured!, p-value = {p}, stat = {stat}")
+            # print(f"<++> label {label} is normally distribured!, p-value = {p}, stat = {stat}")
             normalized_data[[label]] = StandardScaler().fit(training_data[[label]]).transform(normalized_data[[label]])
             scaler_decision[label] = "standard"
     return normalized_data
