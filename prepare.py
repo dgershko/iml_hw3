@@ -47,6 +47,10 @@ def prepare_data(training_data, new_data, transform_to_angle=False):
     # labels.remove("risk")
     scaler_decision = dict()
     for label in labels:
+        if label == "contamination_level":
+            continue
+        if all(normalized_data[label] == 0):
+            continue
         stat, p = shapiro(normalized_data[[label]])
         if p < 0.05:
             # print(f"<> label {label} is not normally distribured, p-value = {p}, stat = {stat}")
